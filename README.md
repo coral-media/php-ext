@@ -1,9 +1,7 @@
-```markdown
 # CoralMedia PHP Extension (Zephir)
 
-A modular Zephir-based PHP extension that provides a **single, cohesive native runtime** for multiple C/C++ libraries (starting with Snowball/libstemmer), exposing a clean PHP API while keeping performance-critical work in native code.
-
----
+A modular Zephir-based PHP extension that provides a **single, cohesive native runtime** for multiple C/C++ 
+libraries (starting with Snowball/libstemmer), exposing a clean PHP API while keeping performance-critical work in native code.
 
 ## Goals
 
@@ -11,8 +9,6 @@ A modular Zephir-based PHP extension that provides a **single, cohesive native r
 - Keep PHP-facing APIs **simple, predictable, and versioned**.
 - Use Zephir **optimizers** to translate specific function calls into efficient C calls (no userland overhead).
 - Keep each native library in its **own section** (code + docs + tests).
-
----
 
 ## Current Features
 
@@ -32,8 +28,6 @@ echo CoralMedia\Stemmer\Snowball::stem("running", "english"), PHP_EOL;
 **Supported languages**
 Depends on which `stem_UTF_8_*.c` sources you compile into the extension (see `config.json` → `extra-sources`).
 In the current setup, English and Spanish are compiled in.
-
----
 
 ## Requirements
 
@@ -57,8 +51,6 @@ You must have **zephir_parser** installed and enabled for your PHP build.
 - Repository: https://github.com/zephir-lang/php-zephir-parser
 - Zephir docs: https://docs.zephir-lang.com/
 
----
-
 ## Project Structure (Conceptual)
 
 - `coralmedia/` (Zephir source)
@@ -67,7 +59,6 @@ You must have **zephir_parser** installed and enabled for your PHP build.
 - `ext/snowball_bridge.c` / `ext/snowball_bridge.h` (native bridge API)
 - `libstemmer/` (vendored libstemmer source tree, or staged sources)
 
----
 
 ## How It Works
 
@@ -108,8 +99,6 @@ and internally uses:
 - `sb_stemmer_length()`
 - `sb_stemmer_delete()`
 
----
-
 ## Building
 
 A typical flow (inside the project root):
@@ -130,8 +119,6 @@ Verify:
 ```bash
 php -r 'var_dump(extension_loaded("coralmedia"));'
 ```
-
----
 
 ## `config.json` Notes
 
@@ -162,8 +149,6 @@ Example snippet:
 }
 ```
 
----
-
 ## Adding New Native Libraries
 
 The intended pattern for each new library:
@@ -173,8 +158,6 @@ The intended pattern for each new library:
 3. Expose a clean Zephir API class (e.g., `CoralMedia\<Domain>\<Feature>`)
 4. Add an optimizer to intercept a function call and emit the native call
 5. Add tests + docs section
-
----
 
 ## Roadmap / Next Steps
 
@@ -189,9 +172,6 @@ Candidate libraries that could deliver strong ROI in IR/ML and scientific worklo
 
 Each will get its own section in this README as it lands.
 
----
-
 ## License
 
 MIT (see `LICENSE`).
-```
