@@ -1,0 +1,4 @@
+libstemmer/src_c/stem_UTF_8_italian.lo: \
+ /srv/app/coralmedia/ext/libstemmer/src_c/stem_UTF_8_italian.c \
+ /srv/app/coralmedia/ext/libstemmer/src_c/../runtime/header.h \
+ /srv/app/coralmedia/ext/libstemmer/src_c/../runtime/api.h

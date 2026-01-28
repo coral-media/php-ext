@@ -1,0 +1,90 @@
+# =========================
+# Zephir / PHP extension
+# =========================
+
+# Generated extension build artifacts
+/ext/.libs/
+/ext/*.lo
+/ext/*.la
+/ext/*.o
+/ext/*.dep
+/ext/*.slo
+/ext/*.so
+/ext/*.a
+/ext/*.gcno
+/ext/*.gcda
+
+# Zephir generated files (keep source .zep, ignore generated C if desired)
+# Uncomment if you want to keep generated C out of git
+# /ext/**/*.zep.c
+# /ext/**/*.zep.h
+
+# Zephir internal cache / temp
+/.zephir/
+zephir.json.lock
+
+# =========================
+# Autotools / build system
+# =========================
+
+Makefile
+Makefile.fragments
+Makefile.objects
+Makefile.global
+aclocal.m4
+autom4te.cache/
+build/
+config.log
+config.status
+config.cache
+libtool
+ltmain.sh
+m4/
+missing
+install-sh
+depcomp
+
+# =========================
+# PHP / PECL
+# =========================
+
+*.tgz
+*.tar.gz
+package.xml.bak
+
+# =========================
+# Native libraries (vendored)
+# =========================
+
+# If libstemmer or other C libs are vendored but rebuilt
+**/.libs/
+**/*.o
+**/*.lo
+**/*.a
+
+# =========================
+# IDE / OS noise
+# =========================
+
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# =========================
+# Logs / runtime
+# =========================
+
+*.log
+core
+vgcore.*
+
+# =========================
+# Composer (if used for tooling)
+# =========================
+
+/vendor/
+composer.lock

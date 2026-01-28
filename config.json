@@ -1,0 +1,94 @@
+{
+    "stubs": {
+        "path": "ide\/%version%\/%namespace%\/",
+        "stubs-run-after-generate": false,
+        "banner": ""
+    },
+    "api": {
+        "path": "doc\/%version%",
+        "theme": {
+            "name": "zephir",
+            "options": {
+                "github": null,
+                "analytics": null,
+                "main_color": "#3E6496",
+                "link_color": "#3E6496",
+                "link_hover_color": "#5F9AE7"
+            }
+        }
+    },
+    "warnings": {
+        "unused-variable": true,
+        "unused-variable-external": false,
+        "possible-wrong-parameter": true,
+        "possible-wrong-parameter-undefined": false,
+        "nonexistent-function": true,
+        "nonexistent-class": true,
+        "non-valid-isset": true,
+        "non-array-update": true,
+        "non-valid-objectupdate": true,
+        "non-valid-fetch": true,
+        "invalid-array-index": true,
+        "non-array-append": true,
+        "invalid-return-type": true,
+        "unreachable-code": true,
+        "nonexistent-constant": true,
+        "not-supported-magic-constant": true,
+        "non-valid-decrement": true,
+        "non-valid-increment": true,
+        "non-valid-clone": true,
+        "non-valid-new": true,
+        "non-array-access": true,
+        "invalid-reference": true,
+        "invalid-typeof-comparison": true,
+        "conditional-initialization": true
+    },
+    "optimizations": {
+        "static-type-inference": true,
+        "static-type-inference-second-pass": true,
+        "local-context-pass": true,
+        "constant-folding": true,
+        "static-constant-class-folding": true,
+        "call-gatherer-pass": true,
+        "check-invalid-reads": false,
+        "internal-call-transformation": false
+    },
+    "extra": {
+        "indent": "spaces",
+        "export-classes": true
+    },
+    "extra-sources": [
+        "snowball_bridge.c",
+        "libstemmer/libstemmer/libstemmer_utf8.c",
+        "libstemmer/runtime/api.c",
+        "libstemmer/runtime/utilities.c",
+        "libstemmer/src_c/stem_UTF_8_danish.c",
+        "libstemmer/src_c/stem_UTF_8_dutch.c",
+        "libstemmer/src_c/stem_UTF_8_english.c",
+        "libstemmer/src_c/stem_UTF_8_finnish.c",
+        "libstemmer/src_c/stem_UTF_8_french.c",
+        "libstemmer/src_c/stem_UTF_8_german.c",
+        "libstemmer/src_c/stem_UTF_8_hungarian.c",
+        "libstemmer/src_c/stem_UTF_8_italian.c",
+        "libstemmer/src_c/stem_UTF_8_norwegian.c",
+        "libstemmer/src_c/stem_UTF_8_porter.c",
+        "libstemmer/src_c/stem_UTF_8_portuguese.c",
+        "libstemmer/src_c/stem_UTF_8_romanian.c",
+        "libstemmer/src_c/stem_UTF_8_russian.c",
+        "libstemmer/src_c/stem_UTF_8_spanish.c",
+        "libstemmer/src_c/stem_UTF_8_swedish.c",
+        "libstemmer/src_c/stem_UTF_8_turkish.c"
+    ],
+    "optimizer-dirs": [
+        "optimizers"
+    ],
+    "namespace": "coralmedia",
+    "name": "coralmedia",
+    "description": "A Zephir-based PHP extension that provides a high-performance, optimizer-driven native bridge for integrating multiple low-level C libraries into PHP with minimal overhead and a clean, stable API.",
+    "author": "Coral Media",
+    "version": "0.0.1",
+    "verbose": false,
+    "requires": {
+        "extensions": []
+    }
+}
