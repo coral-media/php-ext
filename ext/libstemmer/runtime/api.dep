@@ -1,3 +1,0 @@
-libstemmer/runtime/api.lo: /srv/app/php-ext/ext/libstemmer/runtime/api.c \
- /srv/app/php-ext/ext/libstemmer/runtime/header.h \
- /srv/app/php-ext/ext/libstemmer/runtime/api.h

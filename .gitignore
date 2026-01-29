@@ -13,6 +13,7 @@
 /ext/*.a
 /ext/*.gcno
 /ext/*.gcda
+/ext/*.gch
 
 # Zephir generated files (keep source .zep, ignore generated C if desired)
 # Uncomment if you want to keep generated C out of git
@@ -61,6 +62,7 @@ package.xml.bak
 **/*.o
 **/*.lo
 **/*.a
+**/.dep
 
 # =========================
 # IDE / OS noise

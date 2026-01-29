@@ -1,4 +1,0 @@
-libstemmer/src_c/stem_UTF_8_porter.lo: \
- /srv/app/php-ext/ext/libstemmer/src_c/stem_UTF_8_porter.c \
- /srv/app/php-ext/ext/libstemmer/src_c/../runtime/header.h \
- /srv/app/php-ext/ext/libstemmer/src_c/../runtime/api.h
