@@ -15,7 +15,7 @@
 #define PHP_CORALMEDIA_EXTNAME     "coralmedia"
 #define PHP_CORALMEDIA_AUTHOR      "Coral Media"
 #define PHP_CORALMEDIA_ZEPVERSION  "0.19.0-$Id$"
-#define PHP_CORALMEDIA_DESCRIPTION ""
+#define PHP_CORALMEDIA_DESCRIPTION "A Zephir-based PHP extension that provides a high-performance, optimizer-driven native bridge for integrating multiple low-level C libraries into PHP with minimal overhead and a clean, stable API."
 
 
 
