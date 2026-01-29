@@ -3,17 +3,9 @@
 # =========================
 
 # Generated extension build artifacts
-/ext/.libs/
-/ext/*.lo
-/ext/*.la
-/ext/*.o
-/ext/*.dep
-/ext/*.slo
-/ext/*.so
-/ext/*.a
-/ext/*.gcno
-/ext/*.gcda
-/ext/*.gch
+/ext/*
+!ext/libstemmer
+!ext/snowball_*
 
 # Zephir generated files (keep source .zep, ignore generated C if desired)
 # Uncomment if you want to keep generated C out of git
