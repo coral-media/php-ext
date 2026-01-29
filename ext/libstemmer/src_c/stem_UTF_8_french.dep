@@ -1,4 +1,4 @@
 libstemmer/src_c/stem_UTF_8_french.lo: \
- /srv/app/coralmedia/ext/libstemmer/src_c/stem_UTF_8_french.c \
- /srv/app/coralmedia/ext/libstemmer/src_c/../runtime/header.h \
- /srv/app/coralmedia/ext/libstemmer/src_c/../runtime/api.h
+ /srv/app/php-ext/ext/libstemmer/src_c/stem_UTF_8_french.c \
+ /srv/app/php-ext/ext/libstemmer/src_c/../runtime/header.h \
+ /srv/app/php-ext/ext/libstemmer/src_c/../runtime/api.h

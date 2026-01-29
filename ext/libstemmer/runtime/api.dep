@@ -1,4 +1,3 @@
-libstemmer/runtime/api.lo: \
- /srv/app/coralmedia/ext/libstemmer/runtime/api.c \
- /srv/app/coralmedia/ext/libstemmer/runtime/header.h \
- /srv/app/coralmedia/ext/libstemmer/runtime/api.h
+libstemmer/runtime/api.lo: /srv/app/php-ext/ext/libstemmer/runtime/api.c \
+ /srv/app/php-ext/ext/libstemmer/runtime/header.h \
+ /srv/app/php-ext/ext/libstemmer/runtime/api.h

@@ -1,7 +1,7 @@
 coralmedia/stemmer/snowball.lo: \
- /srv/app/coralmedia/ext/coralmedia/stemmer/snowball.zep.c \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../ext_config.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../config.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/snowball.zep.c \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../ext_config.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../config.h \
  /usr/local/include/php/main/php.h \
  /usr/local/include/php/main/php_version.h \
  /usr/local/include/php/Zend/zend.h \
@@ -88,12 +88,12 @@ coralmedia/stemmer/snowball.lo: \
  /usr/local/include/php/TSRM/TSRM.h \
  /usr/local/include/php/Zend/zend_constants.h \
  /usr/local/include/php/main/php_reentrancy.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../php_ext.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../php_coralmedia.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../kernel/globals.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../ext.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../coralmedia.h \
- /srv/app/coralmedia/ext/coralmedia/stemmer/../../coralmedia/stemmer/snowball.zep.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../php_ext.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../php_coralmedia.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../kernel/globals.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../ext.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../coralmedia.h \
+ /srv/app/php-ext/ext/coralmedia/stemmer/../../coralmedia/stemmer/snowball.zep.h \
  /usr/local/include/php/Zend/zend_operators.h \
  /usr/local/include/php/Zend/zend_exceptions.h \
  /usr/local/include/php/Zend/zend_interfaces.h \
