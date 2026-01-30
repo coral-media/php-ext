@@ -58,6 +58,8 @@
         "export-classes": true
     },
     "extra-sources": [
+        "ccontrol_bridge.c",
+        "ccontrol/src/CControl/Sources/LinearAlgebra/dot.c",
         "snowball_bridge.c",
         "libstemmer/libstemmer/libstemmer_utf8.c",
         "libstemmer/runtime/api.c",

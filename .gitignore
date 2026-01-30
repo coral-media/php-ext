@@ -5,7 +5,9 @@
 # Generated extension build artifacts
 /ext/*
 !ext/libstemmer
+!ext/ccontrol
 !ext/snowball_*
+!ext/ccontrol_*
 
 # Zephir generated files (keep source .zep, ignore generated C if desired)
 # Uncomment if you want to keep generated C out of git
