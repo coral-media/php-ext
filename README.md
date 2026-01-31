@@ -20,13 +20,24 @@ echo CoralMedia\Stemmer\Snowball::stem("running", "english");
 
 ### Linear Algebra
 
+Backed by [OpenBLAS](https://github.com/OpenMathLib/OpenBLAS) primitives
+
 #### Dot Product
 
-Native vector dot product backed by [CControl](https://github.com/DanielMartensson/CControl) primitives.
+Computes the dot product of two numeric vectors.
 
-```php
-$result = CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]);
-// 32
+```bash
+php -r "echo CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]), PHP_EOL; //32"
+```
+
+#### Vector norm
+
+Computes the L<sub>1</sub>, L<sub>2</sub> or L<sub>∞</sub> norm of a numeric vector.
+
+```bash
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 0), PHP_EOL; // 6"
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL; // 3.741657"
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL; // 3"
 ```
 
 ---
