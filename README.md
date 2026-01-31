@@ -37,6 +37,7 @@ $result = CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]);
 - Zephir 0.19
 - C toolchain (gcc/clang)
 - zephir_parser
+- OpenBLAS development libraries
 
 Zephir requires the zephir_parser PHP extension to be installed and enabled at build time.
 Repository: [https://github.com/zephir-lang/php-zephir-parser](https://github.com/zephir-lang/php-zephir-parser)
@@ -46,6 +47,26 @@ Install Zephir tooling:
 ```bash
 composer global require phalcon/zephir
 ```
+This extension uses OpenBLAS for high-performance linear algebra operations.
+
+### OpenBLAS installation
+
+**Debian / Ubuntu**
+
+```bash
+apt install libopenblas-dev
+```
+
+**macOS (Homebrew)**
+
+```bash
+brew install openblas
+```
+
+**Windows**
+
+- Install OpenBLAS via MSYS2 (mingw-w64-x86_64-openblas)
+- Ensure openblas.dll is available in PATH at runtime
 
 ---
 
