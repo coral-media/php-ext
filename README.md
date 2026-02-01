@@ -11,9 +11,14 @@ Its purpose is to provide a **single native runtime** for performance‑critical
 
 Fast UTF‑8 stemming for NLP / IR pipelines backed by [zvelo's Snowball implementation](https://github.com/zvelo/libstemmer).
 
-```php
-echo CoralMedia\Stemmer\Snowball::stem("running", "english");
-// run
+```bash
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('attackers'), PHP_EOL;" && \
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('attacking'), PHP_EOL;" && \
+
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciéndole', 'spanish'), PHP_EOL;" && \
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciendole', 'spanish'), PHP_EOL;" && \
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciéndonos', 'spanish'), PHP_EOL;" && \
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciendonos', 'spanish'), PHP_EOL;"
 ```
 
 ---
@@ -35,9 +40,28 @@ php -r "echo CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]), PHP_EOL; //32
 Computes the L<sub>1</sub>, L<sub>2</sub> or L<sub>∞</sub> norm of a numeric vector.
 
 ```bash
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 0), PHP_EOL; // 6"
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL; // 3.741657"
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL; // 3"
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 0), PHP_EOL;" // 6 && \
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL;" // 3.741657 && \
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL;" // 3
+```
+
+### SVD - Singular Value Decomposition
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::svdReduced([1,2,3,4,5,6], 2, 3));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::svdFull([1,2,3,4,5,6], 2, 3));"
+```
+
+`svd()` expects matrices as a flat, row-major array.
+
+```php
+$x = [
+  [1, 2, 3], 
+  [4, 5, 6] 
+];
+$flat = array_merge(...$x);
+$svd = CoralMedia\LinearAlgebra::svd($flat, 2, 3)
 ```
 
 ---
