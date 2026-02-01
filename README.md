@@ -45,7 +45,7 @@ php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL;" // 3.741657 &
 php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL;" // 3
 ```
 
-### SVD - Singular Value Decomposition
+#### SVD - Singular Value Decomposition
 
 ```bash
 php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3));" && \
