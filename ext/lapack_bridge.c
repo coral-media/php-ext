@@ -316,3 +316,43 @@ cleanup:
     if (VT) efree(VT);
     if (work) efree(work);
 }
+
+void linear_algebra_vector_normalize_zval(zval *x, zval *return_value)
+{
+    if (Z_TYPE_P(x) != IS_ARRAY) {
+        zend_type_error("normalize(x) expects an array");
+        return;
+    }
+
+    HashTable *ht = Z_ARRVAL_P(x);
+    int n = zend_hash_num_elements(ht);
+
+    if (n == 0) {
+        zend_value_error("normalize(): vector must not be empty");
+        return;
+    }
+
+    float *vx = emalloc(sizeof(float) * n);
+
+    int i = 0;
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(ht, val) {
+        vx[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    /* L2 norm via OpenBLAS */
+    float norm = cblas_snrm2(n, vx, 1);
+
+    if (norm == 0.0f) {
+        efree(vx);
+        zend_value_error("normalize(): cannot normalize zero-norm vector");
+        return;
+    }
+
+    array_init_size(return_value, n);
+    for (i = 0; i < n; i++) {
+        add_next_index_double(return_value, (double)(vx[i] / norm));
+    }
+
+    efree(vx);
+}

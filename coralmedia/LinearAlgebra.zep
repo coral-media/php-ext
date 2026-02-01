@@ -3,6 +3,7 @@ namespace CoralMedia;
 use CoralMedia\LinearAlgebra\Dot;
 use CoralMedia\LinearAlgebra\Norm;
 use CoralMedia\LinearAlgebra\Svd;
+use CoralMedia\LinearAlgebra\Vector\Norm as VectorNorm;
 
 class LinearAlgebra
 {
@@ -39,5 +40,10 @@ class LinearAlgebra
     public static function svdFull(array x, int rows, int cols)
     {
         return Svd::calc(x, rows, cols, "A");
+    }
+
+    public static function normalize(array! x) -> array
+    {
+        return VectorNorm::calc(x);
     }
 }
