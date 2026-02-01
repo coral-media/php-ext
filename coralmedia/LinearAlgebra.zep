@@ -42,8 +42,8 @@ class LinearAlgebra
         return Svd::calc(x, rows, cols, "A");
     }
 
-    public static function normalize(array! x) -> array
+    public static function normalize(array! x, int method = 1) -> array
     {
-        return VectorNorm::calc(x);
+        return VectorNorm::calc(x, method);
     }
 }

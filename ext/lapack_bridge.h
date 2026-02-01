@@ -18,6 +18,10 @@ void linear_algebra_svd_zval(
     zval *return_value
 );
 
-void linear_algebra_vector_normalize_zval(zval *x, zval *return_value);
+void linear_algebra_vector_normalize_zval(
+    zval *x,
+    int method,
+    zval *return_value
+);
 
 #endif /* LAPACK_BRIDGE_H */

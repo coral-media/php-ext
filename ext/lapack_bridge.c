@@ -9,6 +9,10 @@
 #include <math.h>
 #include <string.h>
 
+#define LA_NORM_L1   0
+#define LA_NORM_L2   1
+#define LA_NORM_LINF 2
+
 /* LAPACK SGESDD (Fortran symbol) */
 extern void sgesdd_(
     char *jobz,
@@ -317,10 +321,13 @@ cleanup:
     if (work) efree(work);
 }
 
-void linear_algebra_vector_normalize_zval(zval *x, zval *return_value)
-{
+void linear_algebra_vector_normalize_zval(
+    zval *x,
+    int method,
+    zval *return_value
+) {
     if (Z_TYPE_P(x) != IS_ARRAY) {
-        zend_type_error("normalize(x) expects an array");
+        zend_type_error("normalize(x, method) expects an array");
         return;
     }
 
@@ -340,8 +347,28 @@ void linear_algebra_vector_normalize_zval(zval *x, zval *return_value)
         vx[i++] = (float) zval_get_double(val);
     } ZEND_HASH_FOREACH_END();
 
-    /* L2 norm via OpenBLAS */
-    float norm = cblas_snrm2(n, vx, 1);
+    float norm = 0.0f;
+
+    switch (method) {
+        case LA_NORM_L1:
+            norm = cblas_sasum(n, vx, 1);
+            break;
+
+        case LA_NORM_L2:
+            norm = cblas_snrm2(n, vx, 1);
+            break;
+
+        case LA_NORM_LINF: {
+            int idx = cblas_isamax(n, vx, 1);
+            norm = fabsf(vx[idx]);
+            break;
+        }
+
+        default:
+            efree(vx);
+            zend_value_error("normalize(): invalid method (0=L1, 1=L2, 2=L∞)");
+            return;
+    }
 
     if (norm == 0.0f) {
         efree(vx);

@@ -45,6 +45,18 @@ php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL;" // 3.741657 &
 php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL;" // 3
 ```
 
+#### Normalize vector
+
+Returns normalized vector.
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::normalize([3, 4]));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, 2, 3], 1));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, -2, 3], 0));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, -5, 3], 2));"
+```
+
+
 #### SVD - Singular Value Decomposition
 
 ```bash
