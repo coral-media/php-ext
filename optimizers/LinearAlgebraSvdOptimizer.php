@@ -34,28 +34,22 @@ class LinearAlgebraSvdOptimizer extends OptimizerAbstract
         $context->headersManager->add('lapack_bridge');
 
         /**
+         * ABI (matches lapack_bridge.c):
+         * void linear_algebra_svd_zval(zval *x, int rows, int cols, zval *jobz_zv, zval *return_value);
+         *
          * params:
-         * 0 = x
-         * 1 = rows
-         * 2 = cols
-         * 3 = jobz (string, we take first char)
+         * 0 = x (zval*)
+         * 1 = rows (zval*)
+         * 2 = cols (zval*)
+         * 3 = jobz (zval* string: "N"|"S"|"A")
          */
         $context->codePrinter->output(
             sprintf(
-                "
-                char jobz = Z_STRVAL_P(%s)[0];
-                linear_algebra_svd_zval(
-                    %s,
-                    zephir_get_intval(%s),
-                    zephir_get_intval(%s),
-                    jobz,
-                    &%s
-                );
-                ",
-                $params[3],
+                "linear_algebra_svd_zval(%s, zephir_get_intval(%s), zephir_get_intval(%s), %s, &%s);",
                 $params[0],
                 $params[1],
                 $params[2],
+                $params[3],
                 $symbol->getName()
             )
         );

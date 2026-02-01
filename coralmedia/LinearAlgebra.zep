@@ -28,22 +28,16 @@ class LinearAlgebra
 
     public static function svd(array x, int rows, int cols)
     {
-        /* safe default */
-        return LinearAlgebra\Svd::calc(x, rows, cols);
-    }
-
-    public static function svdValues(array x, int rows, int cols)
-    {
-        return LinearAlgebra\Svd::calcValues(x, rows, cols);
+        return Svd::calc(x, rows, cols, "N");
     }
 
     public static function svdReduced(array x, int rows, int cols)
     {
-        return LinearAlgebra\Svd::calcReduced(x, rows, cols);
+        return Svd::calc(x, rows, cols, "S");
     }
 
     public static function svdFull(array x, int rows, int cols)
     {
-        return LinearAlgebra\Svd::calcFull(x, rows, cols);
+        return Svd::calc(x, rows, cols, "A");
     }
 }

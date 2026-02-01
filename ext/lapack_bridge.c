@@ -1,10 +1,15 @@
 #include "lapack_bridge.h"
+
 #ifdef USE_SYSTEM_LAPACK
-#include <cblas.h>
+    #include <cblas.h>
 #else
-#error "System OpenBLAS required"
+    #error "System OpenBLAS required"
 #endif
 
+#include <math.h>
+#include <string.h>
+
+/* LAPACK SGESDD (Fortran symbol) */
 extern void sgesdd_(
     char *jobz,
     int *m,
@@ -22,18 +27,7 @@ extern void sgesdd_(
     int *info
 );
 
-void fill_matrix_col_major(zval *arr, float *A, int m, int n)
-{
-    int i = 0;
-    zval *val;
-
-    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(arr), val) {
-        int row = i / n;
-        int col = i % n;
-        A[col * m + row] = (float) zval_get_double(val);
-        i++;
-    } ZEND_HASH_FOREACH_END();
-}
+/* ---------- Helpers ---------- */
 
 void fill_float_array_from_php_array(zval *arr, float *out, size_t n)
 {
@@ -46,7 +40,45 @@ void fill_float_array_from_php_array(zval *arr, float *out, size_t n)
     } ZEND_HASH_FOREACH_END();
 }
 
-/* (wrapper stays exactly the same) */
+/* PHP input is row-major: [a11,a12,...,a1n, a21,...] */
+/* LAPACK expects column-major: A[col*m + row] */
+void fill_matrix_col_major(zval *arr, float *A, int m, int n)
+{
+    int idx = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(arr), val) {
+        int row = idx / n;
+        int col = idx % n;
+        A[col * m + row] = (float) zval_get_double(val);
+        idx++;
+    } ZEND_HASH_FOREACH_END();
+}
+
+static char svd_jobz_from_zval(zval *jobz_zv)
+{
+    if (Z_TYPE_P(jobz_zv) != IS_STRING) {
+        zend_value_error("SVD: jobz must be a string ('N', 'S', or 'A')");
+        return 0;
+    }
+
+    zend_string *zs = Z_STR_P(jobz_zv);
+    if (ZSTR_LEN(zs) != 1) {
+        zend_value_error("SVD: invalid jobz (use 'N', 'S', or 'A')");
+        return 0;
+    }
+
+    char c = ZSTR_VAL(zs)[0];
+    if (c != 'N' && c != 'S' && c != 'A') {
+        zend_value_error("SVD: invalid jobz (use 'N', 'S', or 'A')");
+        return 0;
+    }
+
+    return c;
+}
+
+/* ---------- DOT ---------- */
+
 double linear_algebra_dot_zval(zval *a, zval *b)
 {
     if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
@@ -80,6 +112,8 @@ double linear_algebra_dot_zval(zval *a, zval *b)
 
     return (double) result;
 }
+
+/* ---------- NORM ---------- */
 
 double linear_algebra_norm_zval(zval *x, int method)
 {
@@ -132,22 +166,36 @@ double linear_algebra_norm_zval(zval *x, int method)
     return (double) result;
 }
 
+/* ---------- SVD ---------- */
+
 void linear_algebra_svd_zval(
     zval *x,
     int rows,
     int cols,
-    char jobz,
+    zval *jobz_zv,
     zval *return_value
 ) {
+    if (Z_TYPE_P(x) != IS_ARRAY) {
+        zend_type_error("SVD expects array input");
+        return;
+    }
+
+    char jobz = svd_jobz_from_zval(jobz_zv);
+    if (jobz == 0) return;
+
     int m = rows;
     int n = cols;
     int k = (m < n) ? m : n;
-    int lda = m;          /* column-major */
-    int ldu, ldvt;
-    int info;
 
-    if (Z_TYPE_P(x) != IS_ARRAY) {
-        zend_type_error("SVD expects array input");
+    /* LAPACK column-major */
+    int lda = m;
+
+    int info = 0;
+    int ldu = 1;
+    int ldvt = 1;
+
+    if (m <= 0 || n <= 0) {
+        zend_value_error("SVD: rows and cols must be > 0");
         return;
     }
 
@@ -156,8 +204,8 @@ void linear_algebra_svd_zval(
         return;
     }
 
-    /* ---- JOBZ handling ---- */
-    float *U = NULL;
+    /* Optional outputs */
+    float *U  = NULL;
     float *VT = NULL;
 
     if (jobz == 'S') {
@@ -172,52 +220,31 @@ void linear_algebra_svd_zval(
         U  = emalloc(sizeof(float) * m * m);
         VT = emalloc(sizeof(float) * n * n);
     }
-    else if (jobz == 'N') {
-        ldu = ldvt = 1; /* not referenced */
-    }
-    else {
-        zend_value_error("SVD: invalid jobz (use 'N', 'S', or 'A')");
-        return;
+    else { /* 'N' */
+        ldu = ldvt = 1; /* not referenced by LAPACK when jobz='N' */
     }
 
-    /* ---- Allocate matrix A (column-major) ---- */
+    /* Matrix A (column-major) */
     float *A = emalloc(sizeof(float) * m * n);
-    memset(A, 0, sizeof(float) * m * n);
+    fill_matrix_col_major(x, A, m, n);
 
-    /* PHP array is row-major → convert */
-    zval *val;
-    int idx = 0;
-    ZEND_HASH_FOREACH_VAL(Z_ARRVAL_P(x), val) {
-        int row = idx / n;
-        int col = idx % n;
-        A[col * m + row] = (float) zval_get_double(val);
-        idx++;
-    } ZEND_HASH_FOREACH_END();
-
-    /* ---- Singular values ---- */
+    /* Singular values */
     float *S = emalloc(sizeof(float) * k);
 
-    /* ---- Workspace ---- */
+    /* Workspace query */
+    float *work = NULL;
     int lwork = -1;
-    float wkopt;
+    float wkopt = 0.0f;
     int *iwork = emalloc(sizeof(int) * (8 * k));
 
-    /* ---- Workspace query ---- */
     sgesdd_(
-        &jobz,
-        &m,
-        &n,
-        A,
-        &lda,
+        &jobz, &m, &n,
+        A, &lda,
         S,
-        U,
-        &ldu,
-        VT,
-        &ldvt,
-        &wkopt,
-        &lwork,
-        iwork,
-        &info
+        U, &ldu,
+        VT, &ldvt,
+        &wkopt, &lwork,
+        iwork, &info
     );
 
     if (info != 0) {
@@ -226,24 +253,22 @@ void linear_algebra_svd_zval(
     }
 
     lwork = (int) wkopt;
-    float *work = emalloc(sizeof(float) * lwork);
+    if (lwork < 1) {
+        zend_error(E_ERROR, "SVD workspace query returned invalid lwork=%d", lwork);
+        goto cleanup;
+    }
 
-    /* ---- Compute SVD ---- */
+    work = emalloc(sizeof(float) * lwork);
+
+    /* Compute */
     sgesdd_(
-        &jobz,
-        &m,
-        &n,
-        A,
-        &lda,
+        &jobz, &m, &n,
+        A, &lda,
         S,
-        U,
-        &ldu,
-        VT,
-        &ldvt,
-        work,
-        &lwork,
-        iwork,
-        &info
+        U, &ldu,
+        VT, &ldvt,
+        work, &lwork,
+        iwork, &info
     );
 
     if (info != 0) {
@@ -251,11 +276,11 @@ void linear_algebra_svd_zval(
         goto cleanup;
     }
 
-    /* ---- Return values ---- */
+    /* Return values */
     if (jobz == 'N') {
         array_init_size(return_value, k);
         for (int i = 0; i < k; i++) {
-            add_next_index_double(return_value, S[i]);
+            add_next_index_double(return_value, (double) S[i]);
         }
     } else {
         array_init(return_value);
@@ -265,19 +290,17 @@ void linear_algebra_svd_zval(
         array_init(&zS);
         array_init(&zVT);
 
-        int u_size  = (jobz == 'A') ? m * m : m * k;
-        int vt_size = (jobz == 'A') ? n * n : k * n;
+        int u_size  = (jobz == 'A') ? (m * m) : (m * k);
+        int vt_size = (jobz == 'A') ? (n * n) : (k * n);
 
         for (int i = 0; i < u_size; i++) {
-            add_next_index_double(&zU, U[i]);
+            add_next_index_double(&zU, (double) U[i]);
         }
-
         for (int i = 0; i < k; i++) {
-            add_next_index_double(&zS, S[i]);
+            add_next_index_double(&zS, (double) S[i]);
         }
-
         for (int i = 0; i < vt_size; i++) {
-            add_next_index_double(&zVT, VT[i]);
+            add_next_index_double(&zVT, (double) VT[i]);
         }
 
         add_assoc_zval(return_value, "U",  &zU);
@@ -286,10 +309,10 @@ void linear_algebra_svd_zval(
     }
 
 cleanup:
-    efree(A);
-    efree(S);
-    efree(iwork);
+    if (A) efree(A);
+    if (S) efree(S);
+    if (iwork) efree(iwork);
     if (U) efree(U);
     if (VT) efree(VT);
-    if (lwork > 0) efree(work);
+    if (work) efree(work);
 }
