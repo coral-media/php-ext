@@ -4,6 +4,7 @@
 
 # Generated extension build artifacts
 /ext/*
+/ide/*
 !ext/libstemmer
 !ext/ccontrol
 !ext/elapack
