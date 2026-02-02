@@ -17,6 +17,10 @@
 #define LA_SVD_REDUCED 'S'
 #define LA_SVD_FULL    'A'
 
+#define LA_DIST_L1 0
+#define LA_DIST_L2 1
+#define LA_DIST_LP 2
+
 /* LAPACK SGESDD (Fortran symbol) */
 extern void sgesdd_(
     char *jobz,
@@ -386,4 +390,81 @@ void linear_algebra_vector_normalize_zval(
     }
 
     efree(vx);
+}
+
+void linear_algebra_vector_distance_zval(
+    zval *a,
+    zval *b,
+    int method,
+    double p,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("distance(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    int n = zend_hash_num_elements(ha);
+    if (n == 0 || n != zend_hash_num_elements(hb)) {
+        zend_value_error("distance(): vectors must be same length and non-empty");
+        return;
+    }
+
+    float *va = emalloc(sizeof(float) * n);
+    float *vb = emalloc(sizeof(float) * n);
+
+    int i = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        va[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    i = 0;
+    ZEND_HASH_FOREACH_VAL(hb, val) {
+        vb[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    double result = 0.0;
+
+    switch (method) {
+        case LA_DIST_L1:
+            for (i = 0; i < n; i++) {
+                result += fabs(va[i] - vb[i]);
+            }
+            break;
+
+        case LA_DIST_L2:
+            for (i = 0; i < n; i++) {
+                double d = va[i] - vb[i];
+                result += d * d;
+            }
+            result = sqrt(result);
+            break;
+
+        case LA_DIST_LP:
+            if (p < 1.0) {
+                efree(va); efree(vb);
+                zend_value_error("distance(): Minkowski requires p >= 1");
+                return;
+            }
+            for (i = 0; i < n; i++) {
+                result += pow(fabs(va[i] - vb[i]), p);
+            }
+            result = pow(result, 1.0 / p);
+            break;
+
+        default:
+            efree(va); efree(vb);
+            zend_value_error("distance(): invalid method");
+            return;
+    }
+
+    efree(va);
+    efree(vb);
+
+    ZVAL_DOUBLE(return_value, result);
 }

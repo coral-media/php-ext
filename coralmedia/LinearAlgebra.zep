@@ -23,4 +23,13 @@ class LinearAlgebra
     public static function svd(array x, int rows, int cols, string jobz = Constants::LA_SVD_VALUES) -> array {
         return Matrix\Svd::calc(x, rows, cols, jobz);
     }
+
+    public static function distance(
+        array! a,
+        array! b,
+        int method = Constants::LA_DIST_L2,
+        float p = 3.0
+    ) -> float {
+        return Vector\Distance::calc(a, b, method, p);
+    }
 }

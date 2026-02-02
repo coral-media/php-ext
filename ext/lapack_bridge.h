@@ -24,4 +24,12 @@ void linear_algebra_vector_normalize_zval(
     zval *return_value
 );
 
+void linear_algebra_vector_distance_zval(
+    zval *a,
+    zval *b,
+    int method,
+    double p,
+    zval *return_value
+);
+
 #endif /* LAPACK_BRIDGE_H */
