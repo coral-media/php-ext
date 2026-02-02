@@ -13,6 +13,10 @@
 #define LA_NORM_L2   1
 #define LA_NORM_LINF 2
 
+#define LA_SVD_VALUES  'N'
+#define LA_SVD_REDUCED 'S'
+#define LA_SVD_FULL    'A'
+
 /* LAPACK SGESDD (Fortran symbol) */
 extern void sgesdd_(
     char *jobz,
@@ -145,15 +149,15 @@ double linear_algebra_norm_zval(zval *x, int method)
     float result;
 
     switch (method) {
-        case 0: /* L1 */
+        case LA_NORM_L1: /* L1 */
             result = cblas_sasum(n, vx, 1);
             break;
 
-        case 1: /* L2 */
+        case LA_NORM_L2: /* L2 */
             result = cblas_snrm2(n, vx, 1);
             break;
 
-        case 2: /* L-infinity */
+        case LA_NORM_LINF: /* L-infinity */
         {
             int idx = cblas_isamax(n, vx, 1);
             result = fabsf(vx[idx]);
@@ -212,13 +216,13 @@ void linear_algebra_svd_zval(
     float *U  = NULL;
     float *VT = NULL;
 
-    if (jobz == 'S') {
+    if (jobz == LA_SVD_REDUCED) {
         ldu  = m;
         ldvt = k;
         U  = emalloc(sizeof(float) * m * k);
         VT = emalloc(sizeof(float) * k * n);
     }
-    else if (jobz == 'A') {
+    else if (jobz == LA_SVD_FULL) {
         ldu  = m;
         ldvt = n;
         U  = emalloc(sizeof(float) * m * m);

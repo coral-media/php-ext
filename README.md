@@ -40,9 +40,9 @@ php -r "echo CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]), PHP_EOL; //32
 Computes the L<sub>1</sub>, L<sub>2</sub> or L<sub>∞</sub> norm of a numeric vector.
 
 ```bash
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 0), PHP_EOL;" // 6 && \
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 1), PHP_EOL;" // 3.741657 && \
-php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL;" // 3
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], CoralMedia\Constants::LA_NORM_L1), PHP_EOL;" // 6 && \
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], CoralMedia\Constants::LA_NORM_L2), PHP_EOL;" // 3.741657 && \
+php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], CoralMedia\Constants::LA_NORM_LINF), PHP_EOL;" // 3
 ```
 
 #### Normalize vector
@@ -50,19 +50,19 @@ php -r "echo CoralMedia\LinearAlgebra::norm([1,2,3], 2), PHP_EOL;" // 3
 Returns normalized vector.
 
 ```bash
-php -r "print_r(CoralMedia\\LinearAlgebra::normalize([3, 4]));" && \
-php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, 2, 3], 1));" && \
-php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, -2, 3], 0));" && \
-php -r "print_r(CoralMedia\\LinearAlgebra\\Vector\\Norm::calc([1, -5, 3], 2));"
+php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, -2, 3]));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, -2, 3], CoralMedia\Constants::LA_NORM_L2));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, 2, 3], CoralMedia\Constants::LA_NORM_L1));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, -5, 3], CoralMedia\Constants::LA_NORM_LINF));"
 ```
 
 
 #### SVD - Singular Value Decomposition
 
 ```bash
-php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3));" && \
-php -r "print_r(CoralMedia\\LinearAlgebra::svdReduced([1,2,3,4,5,6], 2, 3));" && \
-php -r "print_r(CoralMedia\\LinearAlgebra::svdFull([1,2,3,4,5,6], 2, 3));"
+php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3, CoralMedia\Constants::LA_SVD_VALUES));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3, CoralMedia\Constants::LA_SVD_REDUCED));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::svd([1,2,3,4,5,6], 2, 3, CoralMedia\Constants::LA_SVD_FULL));"
 ```
 
 `svd()` expects matrices as a flat, row-major array.
@@ -91,9 +91,11 @@ Repository: [https://github.com/zephir-lang/php-zephir-parser](https://github.co
 Documentation: [https://docs.zephir-lang.com/](https://docs.zephir-lang.com/latest/introduction/)
 
 Install Zephir tooling:
+
 ```bash
 composer global require phalcon/zephir
 ```
+
 This extension uses OpenBLAS for high-performance linear algebra operations.
 
 ### OpenBLAS installation
