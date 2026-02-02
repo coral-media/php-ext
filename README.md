@@ -73,12 +73,13 @@ php -r "echo CoralMedia\\LinearAlgebra::distance([1,2,3], [4,5,6], CoralMedia\\C
 
 #### Cosine distance
 
-Measures angular distance between two vectors.
-If vectors have lenght `|1|` use `1 - dot(x, y)` instead.
+Measures angular distance (dissimilarity) between two vectors.
+If vectors have lenght `|1|` use `1 - dot(x, y)` instead or `dot(x, y)` for cosine similarity.
 
 ```bash
 php -r "echo CoralMedia\\LinearAlgebra::distance([1, 2, 3],[4, 5, 6], CoralMedia\\Constants::LA_DIST_COS), PHP_EOL;" && \
 php -r "echo CoralMedia\\LinearAlgebra::distance(CoralMedia\\LinearAlgebra::normalize([1,2,3]), CoralMedia\\LinearAlgebra::normalize([4,5,6]), CoralMedia\\Constants::LA_DIST_COS), PHP_EOL;" && \
+php -r "echo 1 - CoralMedia\\LinearAlgebra::dot(CoralMedia\\LinearAlgebra::normalize([1,2,3]), CoralMedia\\LinearAlgebra::normalize([4,5,6])), PHP_EOL;"
 php -r "echo CoralMedia\\LinearAlgebra::dot(CoralMedia\\LinearAlgebra::normalize([1,2,3]), CoralMedia\\LinearAlgebra::normalize([4,5,6])), PHP_EOL;"
 ```
 
