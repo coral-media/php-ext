@@ -2,8 +2,8 @@ namespace CoralMedia\LinearAlgebra\Vector;
 
 class Norm
 {
-    public static function calc(array! x, int method = 1) -> array
+    public static function calc(array! x, int method) -> float
     {
-        return linear_algebra_vector_normalize(x, method);
+        return linear_algebra_norm(x, method);
     }
 }

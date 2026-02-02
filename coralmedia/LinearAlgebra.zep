@@ -3,7 +3,7 @@ namespace CoralMedia;
 use CoralMedia\LinearAlgebra\Dot;
 use CoralMedia\LinearAlgebra\Norm;
 use CoralMedia\LinearAlgebra\Svd;
-use CoralMedia\LinearAlgebra\Vector\Norm as VectorNorm;
+use CoralMedia\LinearAlgebra\Vector\Normalize;
 
 class LinearAlgebra
 {
@@ -24,6 +24,6 @@ class LinearAlgebra
 
     public static function normalize(array! x, int method = Constants::LA_NORM_L2) -> array
     {
-        return VectorNorm::calc(x, method);
+        return Normalize::calc(x, method);
     }
 }

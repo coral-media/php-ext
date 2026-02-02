@@ -1,4 +1,4 @@
-namespace CoralMedia\LinearAlgebra;
+namespace CoralMedia\LinearAlgebra\Vector;
 
 class Dot
 {
