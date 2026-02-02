@@ -33,7 +33,7 @@ Backed by [OpenBLAS](https://github.com/OpenMathLib/OpenBLAS) primitives
 Computes the dot product of two numeric vectors.
 
 ```bash
-php -r "echo CoralMedia\LinearAlgebra\Dot::calc([1,2,3], [4,5,6]), PHP_EOL; //32"
+php -r "echo CoralMedia\LinearAlgebra::dot([1,2,3], [4,5,6]), PHP_EOL; //32"
 ```
 
 #### Vector norm
@@ -57,6 +57,30 @@ php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, 2, 3], CoralMedia\Const
 php -r "print_r(CoralMedia\\LinearAlgebra::normalize([1, -5, 3], CoralMedia\Constants::LA_NORM_LINF));"
 ```
 
+#### Vector distance
+
+Computes the distance between two numeric vectors of equal length.
+
+- L1 (Manhattan)
+- L2 (Euclidean)
+- Lp (Minkowski) with configurable p
+
+```bash
+php -r "echo CoralMedia\\LinearAlgebra::distance([1,2,3], [4,5,6]), PHP_EOL;" && \
+php -r "echo CoralMedia\\LinearAlgebra::distance([1,2,3], [4,5,6], CoralMedia\\Constants::LA_DIST_L1), PHP_EOL;" && \
+php -r "echo CoralMedia\\LinearAlgebra::distance([1,2,3], [4,5,6], CoralMedia\\Constants::LA_DIST_LP, 3), PHP_EOL;"
+```
+
+#### Cosine distance
+
+Measures angular distance between two vectors.
+If vectors have lenght `|1|` use `1 - dot(x, y)` instead.
+
+```bash
+php -r "echo CoralMedia\\LinearAlgebra::distance([1, 2, 3],[4, 5, 6], CoralMedia\\Constants::LA_DIST_COS), PHP_EOL;" && \
+php -r "echo CoralMedia\\LinearAlgebra::distance(CoralMedia\\LinearAlgebra::normalize([1,2,3]), CoralMedia\\LinearAlgebra::normalize([4,5,6]), CoralMedia\\Constants::LA_DIST_COS), PHP_EOL;" && \
+php -r "echo CoralMedia\\LinearAlgebra::dot(CoralMedia\\LinearAlgebra::normalize([1,2,3]), CoralMedia\\LinearAlgebra::normalize([4,5,6])), PHP_EOL;"
+```
 
 #### SVD - Singular Value Decomposition
 
@@ -74,7 +98,7 @@ $x = [
   [4, 5, 6] 
 ];
 $flat = array_merge(...$x);
-$svd = CoralMedia\LinearAlgebra::svd($flat, 2, 3)
+$svd = CoralMedia\LinearAlgebra::svd($flat, count($x), count($x[0]));
 ```
 
 ---

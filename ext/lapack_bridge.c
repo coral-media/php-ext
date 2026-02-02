@@ -17,9 +17,10 @@
 #define LA_SVD_REDUCED 'S'
 #define LA_SVD_FULL    'A'
 
-#define LA_DIST_L1 0
-#define LA_DIST_L2 1
-#define LA_DIST_LP 2
+#define LA_DIST_L1  0
+#define LA_DIST_L2  1
+#define LA_DIST_LP  2
+#define LA_DIST_COS 3
 
 /* LAPACK SGESDD (Fortran symbol) */
 extern void sgesdd_(
@@ -456,7 +457,25 @@ void linear_algebra_vector_distance_zval(
             }
             result = pow(result, 1.0 / p);
             break;
+        case LA_DIST_COS:
+            double dot = 0.0;
+            double na  = 0.0;
+            double nb  = 0.0;
 
+            for (i = 0; i < n; i++) {
+                dot += va[i] * vb[i];
+                na  += va[i] * va[i];
+                nb  += vb[i] * vb[i];
+            }
+
+            if (na == 0.0 || nb == 0.0) {
+                efree(va); efree(vb);
+                zend_value_error("distance(): cosine distance undefined for zero-norm vector");
+                return;
+            }
+
+            result = 1.0 - (dot / (sqrt(na) * sqrt(nb)));
+            break;
         default:
             efree(va); efree(vb);
             zend_value_error("distance(): invalid method");
