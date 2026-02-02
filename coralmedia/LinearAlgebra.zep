@@ -32,4 +32,16 @@ class LinearAlgebra
     ) -> float {
         return Vector\Distance::calc(a, b, method, p);
     }
+
+    public static function matmul(
+        array! a,
+        array! b,
+        int m,
+        int n,
+        int k,
+        bool transpose_a = false,
+        bool transpose_b = false
+    ) -> array {
+        return Matrix\Matmul::calc(a, b, m, n, k, transpose_a, transpose_b);
+    }
 }

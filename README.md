@@ -102,6 +102,48 @@ $flat = array_merge(...$x);
 $svd = CoralMedia\LinearAlgebra::svd($flat, count($x), count($x[0]));
 ```
 
+#### Matrix Multiplication (GEMM)
+
+High-performance matrix multiplication using OpenBLAS's `cblas_sgemm`.
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::matmul([1,2,3,4,5,6], [7,8,9,10,11,12], 2, 3, 2));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::matmul([1,2,3,4], [5,6,7,8], 2, 2, 2));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::matmul([1,0,0,0,2,0,0,0,3], [2,3,4], 3, 3, 1));" && \
+php -r "print_r(CoralMedia\\LinearAlgebra::matmul([1,2,3,4], [5,7,6,8], 2, 2, 2, false, true));"
+```
+
+**Function signature:**
+```php
+CoralMedia\LinearAlgebra::matmul(
+    array $a,              // Matrix A (flat, row-major)
+    array $b,              // Matrix B (flat, row-major)
+    int $m,                // Rows in A (or A^T if transposed)
+    int $n,                // Cols in A / Rows in B (shared dimension)
+    int $k,                // Cols in B (or B^T if transposed)
+    bool $transpose_a,     // Transpose A? (default: false)
+    bool $transpose_b      // Transpose B? (default: false)
+): array                   // Result matrix C (m×k, flat row-major)
+```
+
+Matrices must be provided as flat arrays in **row-major order**:
+```php
+// PHP 2D array
+$A = [
+  [1, 2, 3],
+  [4, 5, 6]
+];
+
+// Convert to flat row-major
+$flat = array_merge(...$A);  // [1,2,3,4,5,6]
+
+// Multiply with B (3×2)
+$result = CoralMedia\LinearAlgebra::matmul($flat, $B, 2, 3, 2);
+
+// Convert result back to 2D (2×2)
+$C = array_chunk($result, 2);
+```
+
 ---
 
 ## Requirements

@@ -32,4 +32,15 @@ void linear_algebra_vector_distance_zval(
     zval *return_value
 );
 
+void linear_algebra_matmul_zval(
+    zval *a,
+    zval *b,
+    int m,
+    int n,
+    int k,
+    zend_bool transpose_a,
+    zend_bool transpose_b,
+    zval *return_value
+);
+
 #endif /* LAPACK_BRIDGE_H */

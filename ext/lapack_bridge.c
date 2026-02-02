@@ -487,3 +487,106 @@ void linear_algebra_vector_distance_zval(
 
     ZVAL_DOUBLE(return_value, result);
 }
+
+/* ---------- MATRIX MULTIPLICATION ---------- */
+
+void linear_algebra_matmul_zval(
+    zval *a,
+    zval *b,
+    int m,
+    int n,
+    int k,
+    zend_bool transpose_a,
+    zend_bool transpose_b,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("matmul(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    // Determine expected sizes based on transpose flags
+    int a_expected = transpose_a ? (n * m) : (m * n);
+    int b_expected = transpose_b ? (k * n) : (n * k);
+
+    int a_size = zend_hash_num_elements(ha);
+    int b_size = zend_hash_num_elements(hb);
+
+    if (a_size != a_expected) {
+        zend_value_error("matmul(): matrix A size mismatch (expected %d, got %d)", a_expected, a_size);
+        return;
+    }
+
+    if (b_size != b_expected) {
+        zend_value_error("matmul(): matrix B size mismatch (expected %d, got %d)", b_expected, b_size);
+        return;
+    }
+
+    // Allocate matrices
+    float *ma = emalloc(sizeof(float) * a_size);
+    float *mb = emalloc(sizeof(float) * b_size);
+    float *mc = emalloc(sizeof(float) * m * k);
+
+    // Fill matrix A (convert from row-major to column-major for BLAS)
+    fill_matrix_col_major(a, ma, transpose_a ? n : m, transpose_a ? m : n);
+    
+    // Fill matrix B (convert from row-major to column-major for BLAS)
+    fill_matrix_col_major(b, mb, transpose_b ? k : n, transpose_b ? n : k);
+
+    /*
+     * cblas_sgemm performs: C = alpha * op(A) * op(B) + beta * C
+     * 
+     * Parameters:
+     * - Order: CblasColMajor (matrices stored column-major)
+     * - TransA/TransB: CblasNoTrans or CblasTrans
+     * - M: number of rows in op(A) and C
+     * - N: number of columns in op(B) and C
+     * - K: number of columns in op(A) and rows in op(B)
+     * - alpha: scalar multiplier for A*B
+     * - A: matrix A
+     * - lda: leading dimension of A (stride)
+     * - B: matrix B
+     * - ldb: leading dimension of B
+     * - beta: scalar multiplier for C (0.0 since we don't add to existing C)
+     * - C: result matrix
+     * - ldc: leading dimension of C
+     */
+
+    CBLAS_TRANSPOSE trans_a = transpose_a ? CblasTrans : CblasNoTrans;
+    CBLAS_TRANSPOSE trans_b = transpose_b ? CblasTrans : CblasNoTrans;
+
+    int lda = transpose_a ? n : m;
+    int ldb = transpose_b ? k : n;
+
+    cblas_sgemm(
+        CblasColMajor,
+        trans_a,
+        trans_b,
+        m,      // rows in result
+        k,      // cols in result
+        n,      // shared dimension
+        1.0f,   // alpha
+        ma, lda,
+        mb, ldb,
+        0.0f,   // beta
+        mc, m   // ldc
+    );
+
+    // Convert result from column-major back to row-major for PHP
+    array_init_size(return_value, m * k);
+    
+    for (int row = 0; row < m; row++) {
+        for (int col = 0; col < k; col++) {
+            // Column-major: C[col*m + row]
+            // Row-major index: row*k + col
+            add_next_index_double(return_value, (double)mc[col * m + row]);
+        }
+    }
+
+    efree(ma);
+    efree(mb);
+    efree(mc);
+}
