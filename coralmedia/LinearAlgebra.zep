@@ -1,29 +1,26 @@
 namespace CoralMedia;
 
-use CoralMedia\LinearAlgebra\Dot;
-use CoralMedia\LinearAlgebra\Norm;
-use CoralMedia\LinearAlgebra\Svd;
-use CoralMedia\LinearAlgebra\Vector\Normalize;
+use CoralMedia\LinearAlgebra\Vector;
+use CoralMedia\LinearAlgebra\Matrix;
 
 class LinearAlgebra
 {
     public static function dot(array! a, array! b) -> float
     {
-        return Dot::calc(a, b);
+        return Vector\Dot::calc(a, b);
     }
 
     public static function norm(array! x, int method = Constants::LA_NORM_L2) -> float
     {
-        return Norm::calc(x, method);
-    }
-
-    public static function svd(array x, int rows, int cols, string jobz = Constants::LA_SVD_VALUES) -> array
-    {
-        return Svd::calc(x, rows, cols, jobz);
+        return Vector\Norm::calc(x, method);
     }
 
     public static function normalize(array! x, int method = Constants::LA_NORM_L2) -> array
     {
-        return Normalize::calc(x, method);
+        return Vector\Normalize::calc(x, method);
+    }
+
+    public static function svd(array x, int rows, int cols, string jobz = Constants::LA_SVD_VALUES) -> array {
+        return Matrix\Svd::calc(x, rows, cols, jobz);
     }
 }

@@ -14,6 +14,7 @@ Fast UTF‑8 stemming for NLP / IR pipelines backed by [zvelo's Snowball impleme
 ```bash
 php -r "echo CoralMedia\\Stemmer\\Snowball::stem('attackers'), PHP_EOL;" && \
 php -r "echo CoralMedia\\Stemmer\\Snowball::stem('attacking'), PHP_EOL;" && \
+php -r "echo CoralMedia\\Stemmer\\Snowball::stem('attacked'), PHP_EOL;" && \
 
 php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciéndole', 'spanish'), PHP_EOL;" && \
 php -r "echo CoralMedia\\Stemmer\\Snowball::stem('haciendole', 'spanish'), PHP_EOL;" && \
