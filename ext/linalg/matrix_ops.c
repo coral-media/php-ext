@@ -263,3 +263,426 @@ void linear_algebra_matmul_zval(
     efree(mb);
     efree(mc);
 }
+
+/* ---------- ELEMENT-WISE OPERATIONS ---------- */
+
+void linear_algebra_matrix_add_zval(
+    zval *a,
+    zval *b,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("matrixAdd(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+    int b_size = zend_hash_num_elements(hb);
+
+    if (a_size != size) {
+        zend_value_error("matrixAdd(): matrix A size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (b_size != size) {
+        zend_value_error("matrixAdd(): matrix B size mismatch (expected %d, got %d)", size, b_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixAdd(): matrices must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+    float *fb = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    i = 0;
+    ZEND_HASH_FOREACH_VAL(hb, val) {
+        fb[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] + fb[i]));
+    }
+
+    efree(fa);
+    efree(fb);
+}
+
+void linear_algebra_matrix_subtract_zval(
+    zval *a,
+    zval *b,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("matrixSubtract(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+    int b_size = zend_hash_num_elements(hb);
+
+    if (a_size != size) {
+        zend_value_error("matrixSubtract(): matrix A size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (b_size != size) {
+        zend_value_error("matrixSubtract(): matrix B size mismatch (expected %d, got %d)", size, b_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixSubtract(): matrices must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+    float *fb = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    i = 0;
+    ZEND_HASH_FOREACH_VAL(hb, val) {
+        fb[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] - fb[i]));
+    }
+
+    efree(fa);
+    efree(fb);
+}
+
+void linear_algebra_matrix_hadamard_zval(
+    zval *a,
+    zval *b,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("matrixHadamard(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+    int b_size = zend_hash_num_elements(hb);
+
+    if (a_size != size) {
+        zend_value_error("matrixHadamard(): matrix A size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (b_size != size) {
+        zend_value_error("matrixHadamard(): matrix B size mismatch (expected %d, got %d)", size, b_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixHadamard(): matrices must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+    float *fb = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    i = 0;
+    ZEND_HASH_FOREACH_VAL(hb, val) {
+        fb[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] * fb[i]));
+    }
+
+    efree(fa);
+    efree(fb);
+}
+
+void linear_algebra_matrix_divide_zval(
+    zval *a,
+    zval *b,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY || Z_TYPE_P(b) != IS_ARRAY) {
+        zend_type_error("matrixDivide(a, b) expects two arrays");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    HashTable *hb = Z_ARRVAL_P(b);
+
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+    int b_size = zend_hash_num_elements(hb);
+
+    if (a_size != size) {
+        zend_value_error("matrixDivide(): matrix A size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (b_size != size) {
+        zend_value_error("matrixDivide(): matrix B size mismatch (expected %d, got %d)", size, b_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixDivide(): matrices must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+    float *fb = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    i = 0;
+    ZEND_HASH_FOREACH_VAL(hb, val) {
+        fb[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        if (fb[i] == 0.0f) {
+            efree(fa);
+            efree(fb);
+            zend_value_error("matrixDivide(): division by zero at element %d", i);
+            return;
+        }
+        add_next_index_double(return_value, (double)(fa[i] / fb[i]));
+    }
+
+    efree(fa);
+    efree(fb);
+}
+
+/* ---------- SCALAR OPERATIONS ---------- */
+
+void linear_algebra_matrix_scale_zval(
+    zval *a,
+    double scalar,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY) {
+        zend_type_error("matrixScale(a, scalar) expects an array");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+
+    if (a_size != size) {
+        zend_value_error("matrixScale(): matrix size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixScale(): matrix must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    float scalar_f = (float) scalar;
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] * scalar_f));
+    }
+
+    efree(fa);
+}
+
+void linear_algebra_matrix_add_scalar_zval(
+    zval *a,
+    double scalar,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY) {
+        zend_type_error("matrixAddScalar(a, scalar) expects an array");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+
+    if (a_size != size) {
+        zend_value_error("matrixAddScalar(): matrix size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixAddScalar(): matrix must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    float scalar_f = (float) scalar;
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] + scalar_f));
+    }
+
+    efree(fa);
+}
+
+void linear_algebra_matrix_multiply_scalar_zval(
+    zval *a,
+    double scalar,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY) {
+        zend_type_error("matrixMultiplyScalar(a, scalar) expects an array");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+
+    if (a_size != size) {
+        zend_value_error("matrixMultiplyScalar(): matrix size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixMultiplyScalar(): matrix must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    float scalar_f = (float) scalar;
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] * scalar_f));
+    }
+
+    efree(fa);
+}
+
+void linear_algebra_matrix_divide_scalar_zval(
+    zval *a,
+    double scalar,
+    int rows,
+    int cols,
+    zval *return_value
+) {
+    if (Z_TYPE_P(a) != IS_ARRAY) {
+        zend_type_error("matrixDivideScalar(a, scalar) expects an array");
+        return;
+    }
+
+    if (scalar == 0.0) {
+        zend_value_error("matrixDivideScalar(): division by zero");
+        return;
+    }
+
+    HashTable *ha = Z_ARRVAL_P(a);
+    int size = rows * cols;
+    int a_size = zend_hash_num_elements(ha);
+
+    if (a_size != size) {
+        zend_value_error("matrixDivideScalar(): matrix size mismatch (expected %d, got %d)", size, a_size);
+        return;
+    }
+
+    if (size == 0) {
+        zend_value_error("matrixDivideScalar(): matrix must not be empty");
+        return;
+    }
+
+    float *fa = emalloc(sizeof(float) * size);
+
+    int i = 0;
+    zval *val;
+    ZEND_HASH_FOREACH_VAL(ha, val) {
+        fa[i++] = (float) zval_get_double(val);
+    } ZEND_HASH_FOREACH_END();
+
+    float scalar_f = (float) scalar;
+
+    array_init_size(return_value, size);
+    for (i = 0; i < size; i++) {
+        add_next_index_double(return_value, (double)(fa[i] / scalar_f));
+    }
+
+    efree(fa);
+}

@@ -5,6 +5,57 @@ Its purpose is to provide a **single native runtime** for performance‑critical
 
 ---
 
+## Requirements
+
+- PHP 8.x
+- Zephir 0.19
+- C toolchain (gcc/clang)
+- zephir_parser
+- OpenBLAS development libraries
+
+Zephir requires the zephir_parser PHP extension to be installed and enabled at build time.
+Repository: [https://github.com/zephir-lang/php-zephir-parser](https://github.com/zephir-lang/php-zephir-parser)
+Documentation: [https://docs.zephir-lang.com/](https://docs.zephir-lang.com/latest/introduction/)
+
+Install Zephir tooling:
+
+```bash
+composer global require phalcon/zephir
+```
+
+This extension uses OpenBLAS for high-performance linear algebra operations.
+
+### OpenBLAS installation
+
+**Debian / Ubuntu**
+
+```bash
+apt install libopenblas-dev
+```
+
+**macOS (Homebrew)**
+
+```bash
+brew install openblas
+```
+
+**Windows**
+
+- Install OpenBLAS via MSYS2 (mingw-w64-x86_64-openblas)
+- Ensure openblas.dll is available in PATH at runtime
+
+---
+
+## Build & Install
+
+```bash
+zephir fullclean
+zephir build
+printf "extension=coralmedia.so\n" > /usr/local/etc/php/conf.d/coralmedia.ini
+```
+
+---
+
 ## Current Features
 
 ### Snowball Stemmer (libstemmer)
@@ -144,55 +195,100 @@ $result = CoralMedia\LinearAlgebra::matmul($flat, $B, 2, 3, 2);
 $C = array_chunk($result, 2);
 ```
 
----
+#### Element-wise Matrix Operations
 
-## Requirements
+Element-wise operations that apply operations to corresponding elements of matrices or apply scalar operations to all elements.
 
-- PHP 8.x
-- Zephir 0.19
-- C toolchain (gcc/clang)
-- zephir_parser
-- OpenBLAS development libraries
+##### Binary Element-wise Operations
 
-Zephir requires the zephir_parser PHP extension to be installed and enabled at build time.
-Repository: [https://github.com/zephir-lang/php-zephir-parser](https://github.com/zephir-lang/php-zephir-parser)
-Documentation: [https://docs.zephir-lang.com/](https://docs.zephir-lang.com/latest/introduction/)
-
-Install Zephir tooling:
+**Matrix Addition** - Element-wise addition: `C[i] = A[i] + B[i]`
 
 ```bash
-composer global require phalcon/zephir
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixAdd([1,2,3,4], [5,6,7,8], 2, 2));"
+# Output: [6, 8, 10, 12]
 ```
 
-This extension uses OpenBLAS for high-performance linear algebra operations.
-
-### OpenBLAS installation
-
-**Debian / Ubuntu**
+**Matrix Subtraction** - Element-wise subtraction: `C[i] = A[i] - B[i]`
 
 ```bash
-apt install libopenblas-dev
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixSubtract([10,20,30,40], [1,2,3,4], 2, 2));"
+# Output: [9, 18, 27, 36]
 ```
 
-**macOS (Homebrew)**
+**Hadamard Product** - Element-wise multiplication: `C[i] = A[i] × B[i]`
 
 ```bash
-brew install openblas
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixHadamard([2,3,4,5], [1,2,3,4], 2, 2));"
+# Output: [2, 6, 12, 20]
 ```
 
-**Windows**
-
-- Install OpenBLAS via MSYS2 (mingw-w64-x86_64-openblas)
-- Ensure openblas.dll is available in PATH at runtime
-
----
-
-## Build & Install
+**Element-wise Division** - Element-wise division: `C[i] = A[i] / B[i]`
 
 ```bash
-zephir fullclean
-zephir build
-printf "extension=coralmedia.so\n" > /usr/local/etc/php/conf.d/coralmedia.ini
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixDivide([10,20,30,40], [2,4,5,8], 2, 2));"
+# Output: [5, 5, 6, 5]
+```
+
+##### Scalar Operations
+
+**Matrix Scale** - Multiply all elements by scalar: `C[i] = scalar × A[i]`
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixScale([1,2,3,4], 2.5, 2, 2));"
+# Output: [2.5, 5, 7.5, 10]
+```
+
+**Add Scalar** - Add scalar to all elements: `C[i] = A[i] + scalar`
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixAddScalar([1,2,3,4], 10.0, 2, 2));"
+# Output: [11, 12, 13, 14]
+```
+
+**Multiply Scalar** - Multiply all elements by scalar: `C[i] = scalar × A[i]`
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixMultiplyScalar([2,4,6,8], 0.5, 2, 2));"
+# Output: [1, 2, 3, 4]
+```
+
+**Divide by Scalar** - Divide all elements by scalar: `C[i] = A[i] / scalar`
+
+```bash
+php -r "print_r(CoralMedia\\LinearAlgebra::matrixDivideScalar([10,20,30,40], 10.0, 2, 2));"
+# Output: [1, 2, 3, 4]
+```
+
+**Function signatures:**
+```php
+// Binary operations - require two matrices of same dimensions
+CoralMedia\LinearAlgebra::matrixAdd(array $a, array $b, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixSubtract(array $a, array $b, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixHadamard(array $a, array $b, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixDivide(array $a, array $b, int $rows, int $cols): array
+
+// Scalar operations - apply scalar to all elements
+CoralMedia\LinearAlgebra::matrixScale(array $a, float $scalar, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixAddScalar(array $a, float $scalar, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixMultiplyScalar(array $a, float $scalar, int $rows, int $cols): array
+CoralMedia\LinearAlgebra::matrixDivideScalar(array $a, float $scalar, int $rows, int $cols): array
+```
+
+**Error handling:**
+- Binary operations throw `ValueError` if matrix dimensions don't match
+- `matrixDivide()` throws `ValueError` if any element in matrix B is zero
+- `matrixDivideScalar()` throws `ValueError` if scalar is zero
+- All operations throw `TypeError` if arguments are not arrays (for matrices) or numeric (for scalars)
+
+**Example: Chaining operations**
+```php
+use CoralMedia\LinearAlgebra;
+
+// Scale matrix, add scalar, then element-wise multiply
+$a = [1, 2, 3, 4];
+$scaled = LinearAlgebra::matrixScale($a, 2.0, 2, 2);        // [2, 4, 6, 8]
+$added = LinearAlgebra::matrixAddScalar($scaled, 1.0, 2, 2); // [3, 5, 7, 9]
+$result = LinearAlgebra::matrixHadamard($added, [1,1,1,1], 2, 2); // [3, 5, 7, 9]
 ```
 
 ---

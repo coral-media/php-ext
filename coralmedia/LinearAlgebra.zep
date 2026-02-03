@@ -44,4 +44,36 @@ class LinearAlgebra
     ) -> array {
         return Matrix\Matmul::calc(a, b, m, n, k, transpose_a, transpose_b);
     }
+
+    public static function matrixAdd(array! a, array! b, int rows, int cols) -> array {
+        return Matrix\Add::calc(a, b, rows, cols);
+    }
+
+    public static function matrixSubtract(array! a, array! b, int rows, int cols) -> array {
+        return Matrix\Subtract::calc(a, b, rows, cols);
+    }
+
+    public static function matrixHadamard(array! a, array! b, int rows, int cols) -> array {
+        return Matrix\Hadamard::calc(a, b, rows, cols);
+    }
+
+    public static function matrixDivide(array! a, array! b, int rows, int cols) -> array {
+        return Matrix\Divide::calc(a, b, rows, cols);
+    }
+
+    public static function matrixScale(array! a, float scalar, int rows, int cols) -> array {
+        return Matrix\Scale::calc(a, scalar, rows, cols);
+    }
+
+    public static function matrixAddScalar(array! a, float scalar, int rows, int cols) -> array {
+        return Matrix\Scale::addScalar(a, scalar, rows, cols);
+    }
+
+    public static function matrixMultiplyScalar(array! a, float scalar, int rows, int cols) -> array {
+        return Matrix\Scale::multiplyScalar(a, scalar, rows, cols);
+    }
+
+    public static function matrixDivideScalar(array! a, float scalar, int rows, int cols) -> array {
+        return Matrix\Scale::divideScalar(a, scalar, rows, cols);
+    }
 }

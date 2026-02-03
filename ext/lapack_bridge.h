@@ -43,4 +43,16 @@ void linear_algebra_matmul_zval(
     zval *return_value
 );
 
+/* Element-wise binary operations */
+void linear_algebra_matrix_add_zval(zval *a, zval *b, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_subtract_zval(zval *a, zval *b, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_hadamard_zval(zval *a, zval *b, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_divide_zval(zval *a, zval *b, int rows, int cols, zval *return_value);
+
+/* Scalar operations */
+void linear_algebra_matrix_scale_zval(zval *a, double scalar, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_add_scalar_zval(zval *a, double scalar, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_multiply_scalar_zval(zval *a, double scalar, int rows, int cols, zval *return_value);
+void linear_algebra_matrix_divide_scalar_zval(zval *a, double scalar, int rows, int cols, zval *return_value);
+
 #endif /* LAPACK_BRIDGE_H */
