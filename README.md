@@ -12,6 +12,7 @@ Its purpose is to provide a **single native runtime** for performance‑critical
 - C toolchain (gcc/clang)
 - zephir_parser
 - OpenBLAS development libraries
+- ICU (International Components for Unicode) development libraries
 
 Zephir requires the zephir_parser PHP extension to be installed and enabled at build time.
 Repository: [https://github.com/zephir-lang/php-zephir-parser](https://github.com/zephir-lang/php-zephir-parser)
@@ -23,7 +24,7 @@ Install Zephir tooling:
 composer global require phalcon/zephir
 ```
 
-This extension uses OpenBLAS for high-performance linear algebra operations.
+This extension uses OpenBLAS for high-performance linear algebra operations and ICU for Unicode text processing.
 
 ### OpenBLAS installation
 
@@ -43,6 +44,25 @@ brew install openblas
 
 - Install OpenBLAS via MSYS2 (mingw-w64-x86_64-openblas)
 - Ensure openblas.dll is available in PATH at runtime
+
+### ICU installation
+
+**Debian / Ubuntu**
+
+```bash
+apt install libicu-dev
+```
+
+**macOS (Homebrew)**
+
+```bash
+brew install icu4c
+```
+
+**Windows**
+
+- Install ICU via MSYS2 (mingw-w64-x86_64-icu)
+- Ensure ICU DLLs are available in PATH at runtime
 
 ---
 
@@ -290,6 +310,70 @@ $scaled = LinearAlgebra::matrixScale($a, 2.0, 2, 2);        // [2, 4, 6, 8]
 $added = LinearAlgebra::matrixAddScalar($scaled, 1.0, 2, 2); // [3, 5, 7, 9]
 $result = LinearAlgebra::matrixHadamard($added, [1,1,1,1], 2, 2); // [3, 5, 7, 9]
 ```
+
+---
+
+### Text Processing
+
+#### ICU Tokenizer
+
+High-performance Unicode text tokenization using [ICU (International Components for Unicode)](https://icu.unicode.org/) for proper word and sentence boundary detection.
+
+##### Word Breaking
+
+Tokenize text into words with proper Unicode segmentation. Handles languages without spaces (Japanese, Thai, Chinese) and complex boundary rules.
+
+```bash
+# English
+php -r "print_r(CoralMedia\\Text::wordBreak('Hello world'));"
+# Output: Array([0]=>Hello [1]=>world)
+
+# Japanese (no spaces)
+php -r "print_r(CoralMedia\\Text::wordBreak('私は学生です', 'ja_JP'));"
+# Output: Array([0]=>私 [1]=>は [2]=>学生 [3]=>です)
+
+# Thai (no spaces, dictionary-based)
+php -r "print_r(CoralMedia\\Text::wordBreak('สวัสดีครับ', 'th_TH'));"
+# Output: Array([0]=>สวัสดี [1]=>ครับ)
+
+# Chinese (character-based)
+php -r "print_r(CoralMedia\\Text::wordBreak('我爱中国', 'zh_CN'));"
+# Output: Array([0]=>我 [1]=>爱 [2]=>中国)
+```
+
+##### Sentence Breaking
+
+Split text into sentences using ICU sentence boundary analysis. Handles abbreviations and language-specific rules.
+
+```bash
+# English sentences
+php -r "print_r(CoralMedia\\Text::sentenceBreak('Hello. World.'));"
+# Output: Array([0]=>Hello.  [1]=>World.)
+
+# Japanese sentences
+php -r "print_r(CoralMedia\\Text::sentenceBreak('こんにちは。元気ですか。', 'ja_JP'));"
+# Output: Array([0]=>こんにちは。 [1]=>元気ですか。)
+```
+
+**Function signatures:**
+```php
+CoralMedia\Text::wordBreak(string $text, string $locale = "en_US"): array
+CoralMedia\Text::sentenceBreak(string $text, string $locale = "en_US"): array
+```
+
+**Supported locales:**
+- `en_US` - English (United States)
+- `ja_JP` - Japanese
+- `zh_CN` - Chinese (Simplified)
+- `th_TH` - Thai
+- And many more ICU-supported locales
+
+**Key features:**
+- Proper Unicode word segmentation for languages without spaces
+- Dictionary-based breaking for Thai, Myanmar, Khmer, Lao
+- Morphological analysis for Japanese, Chinese, Korean
+- Locale-specific rules for contractions, abbreviations, numbers
+- Significantly more accurate than regex-based tokenization
 
 ---
 

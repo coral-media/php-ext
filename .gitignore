@@ -10,6 +10,7 @@
 !ext/lapack_*
 !ext/linalg_*
 !ext/linalg
+!ext/icu_*
 
 # Zephir generated files (keep source .zep, ignore generated C if desired)
 # Uncomment if you want to keep generated C out of git

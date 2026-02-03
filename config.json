@@ -54,7 +54,7 @@
         "internal-call-transformation": false
     },
     "extra-cflags": "-DUSE_SYSTEM_LAPACK",
-    "extra-libs": "-lopenblas",
+    "extra-libs": "-lopenblas -licui18n -licuuc -licudata",
     "extra": {
         "indent": "spaces",
         "export-classes": true
@@ -64,6 +64,7 @@
         "linalg/vector_ops.c",
         "linalg/matrix_ops.c",
         "snowball_bridge.c",
+        "icu_bridge.c",
         "libstemmer/libstemmer/libstemmer_utf8.c",
         "libstemmer/runtime/api.c",
         "libstemmer/runtime/utilities.c",
