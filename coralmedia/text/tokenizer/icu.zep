@@ -40,4 +40,18 @@ class Icu
         // This call will be intercepted by the optimizer
         return icu_lowercase(text, locale);
     }
+
+    /**
+     * Remove diacritics (accents) from text
+     *
+     * Converts characters like café → cafe, naïve → naive
+     *
+     * @param string text The text to process
+     * @return string Text with diacritics removed
+     */
+    public static function removeDiacritics(string text) -> string
+    {
+        // This call will be intercepted by the optimizer
+        return icu_remove_diacritics(text);
+    }
 }

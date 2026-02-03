@@ -6,5 +6,6 @@
 void icu_word_break(zend_string *text, const char *locale, zval *return_value);
 void icu_sentence_break(zend_string *text, const char *locale, zval *return_value);
 void icu_lowercase(zend_string *text, const char *locale, zval *return_value);
+void icu_remove_diacritics(zend_string *text, zval *return_value);
 
 #endif

@@ -367,11 +367,38 @@ php -r "echo CoralMedia\\Text::lowercase('ΑΘΗΝΑ', 'el_GR');" && \
 php -r "echo CoralMedia\\Text::lowercase('МОСКВА', 'ru_RU');"
 ```
 
+##### Diacritic Removal
+
+Remove diacritical marks (accents) from text using ICU transliteration. Converts accented characters to their base forms.
+
+```bash
+# French accents
+php -r "echo CoralMedia\\Text::removeDiacritics('café');"
+# Output: cafe
+
+# German umlauts
+php -r "echo CoralMedia\\Text::removeDiacritics('Zürich');"
+# Output: Zurich
+
+# Spanish accents
+php -r "echo CoralMedia\\Text::removeDiacritics('español');"
+# Output: espanol
+
+# Portuguese tildes
+php -r "echo CoralMedia\\Text::removeDiacritics('São Paulo');"
+# Output: Sao Paulo
+
+# Vietnamese complex diacritics
+php -r "echo CoralMedia\\Text::removeDiacritics('Việt Nam');"
+# Output: Viet Nam
+```
+
 **Function signatures:**
 ```php
 CoralMedia\Text::wordBreak(string $text, string $locale = "en_US"): array
 CoralMedia\Text::sentenceBreak(string $text, string $locale = "en_US"): array
 CoralMedia\Text::lowercase(string $text, string $locale = "en_US"): string
+CoralMedia\Text::removeDiacritics(string $text): string
 ```
 
 **Supported locales:**
@@ -387,6 +414,7 @@ CoralMedia\Text::lowercase(string $text, string $locale = "en_US"): string
 - Morphological analysis for Japanese, Chinese, Korean
 - Locale-specific rules for contractions, abbreviations, numbers
 - Locale-aware case normalization (handles Turkish İ/I, Greek Σ/ς, etc.)
+- Diacritic removal using ICU transliteration (café → cafe, Zürich → Zurich)
 - Significantly more accurate than regex-based tokenization
 
 ---

@@ -41,4 +41,15 @@ class Text
     {
         return Icu::lowercase(text, locale);
     }
+
+    /**
+     * Remove diacritics (accents) from text
+     *
+     * @param string text The text to process
+     * @return string Text with diacritics removed
+     */
+    public static function removeDiacritics(string text) -> string
+    {
+        return Icu::removeDiacritics(text);
+    }
 }
