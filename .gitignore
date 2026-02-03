@@ -6,11 +6,10 @@
 /ext/*
 /ide/*
 !ext/libstemmer
-!ext/ccontrol
-!ext/elapack
 !ext/snowball_*
-!ext/ccontrol_*
 !ext/lapack_*
+!ext/linalg_*
+!ext/linalg
 
 # Zephir generated files (keep source .zep, ignore generated C if desired)
 # Uncomment if you want to keep generated C out of git

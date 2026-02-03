@@ -60,7 +60,9 @@
         "export-classes": true
     },
     "extra-sources": [
-        "lapack_bridge.c",
+        "linalg/common.c",
+        "linalg/vector_ops.c",
+        "linalg/matrix_ops.c",
         "snowball_bridge.c",
         "libstemmer/libstemmer/libstemmer_utf8.c",
         "libstemmer/runtime/api.c",
