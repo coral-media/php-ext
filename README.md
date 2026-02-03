@@ -355,10 +355,23 @@ php -r "print_r(CoralMedia\\Text::sentenceBreak('こんにちは。元気です�
 # Output: Array([0]=>こんにちは。 [1]=>元気ですか。)
 ```
 
+##### Case Normalization
+
+Convert text to lowercase using ICU locale-aware case mapping. Handles locale-specific rules like Turkish dotted/dotless I.
+
+```bash
+php -r "echo CoralMedia\\Text::lowercase('HELLO WORLD');" && \
+php -r "echo CoralMedia\\Text::lowercase('CAFÉ');" && \
+php -r "echo CoralMedia\\Text::lowercase('İSTANBUL', 'tr_TR');" && \
+php -r "echo CoralMedia\\Text::lowercase('ΑΘΗΝΑ', 'el_GR');" && \
+php -r "echo CoralMedia\\Text::lowercase('МОСКВА', 'ru_RU');"
+```
+
 **Function signatures:**
 ```php
 CoralMedia\Text::wordBreak(string $text, string $locale = "en_US"): array
 CoralMedia\Text::sentenceBreak(string $text, string $locale = "en_US"): array
+CoralMedia\Text::lowercase(string $text, string $locale = "en_US"): string
 ```
 
 **Supported locales:**
@@ -373,6 +386,7 @@ CoralMedia\Text::sentenceBreak(string $text, string $locale = "en_US"): array
 - Dictionary-based breaking for Thai, Myanmar, Khmer, Lao
 - Morphological analysis for Japanese, Chinese, Korean
 - Locale-specific rules for contractions, abbreviations, numbers
+- Locale-aware case normalization (handles Turkish İ/I, Greek Σ/ς, etc.)
 - Significantly more accurate than regex-based tokenization
 
 ---

@@ -29,4 +29,16 @@ class Text
     {
         return Icu::sentenceBreak(text, locale);
     }
+
+    /**
+     * Convert text to lowercase using ICU locale-aware case mapping
+     *
+     * @param string text The text to convert
+     * @param string locale The locale (default: "en_US")
+     * @return string Lowercase text
+     */
+    public static function lowercase(string text, string locale = "en_US") -> string
+    {
+        return Icu::lowercase(text, locale);
+    }
 }

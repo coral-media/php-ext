@@ -159,3 +159,71 @@ void icu_sentence_break(zend_string *text, const char *locale, zval *return_valu
     ubrk_close(bi);
     efree(u16_text);
 }
+
+void icu_lowercase(zend_string *text, const char *locale, zval *return_value)
+{
+    // 1. Input validation
+    if (!text || ZSTR_LEN(text) == 0) {
+        ZVAL_EMPTY_STRING(return_value);
+        return;
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+
+    // 2. UTF-8 to UTF-16 conversion
+    int32_t u16_len = 0;
+    UChar *u16_text = NULL;
+
+    // Pre-flight to get required buffer size
+    u_strFromUTF8(NULL, 0, &u16_len, ZSTR_VAL(text), ZSTR_LEN(text), &status);
+    if (status != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(status)) {
+        zend_value_error("icu_lowercase: UTF-8 conversion failed");
+        return;
+    }
+
+    status = U_ZERO_ERROR;
+    u16_text = (UChar*) emalloc(sizeof(UChar) * (u16_len + 1));
+    u_strFromUTF8(u16_text, u16_len + 1, &u16_len, ZSTR_VAL(text), ZSTR_LEN(text), &status);
+
+    if (U_FAILURE(status)) {
+        efree(u16_text);
+        zend_value_error("icu_lowercase: UTF-8 to UTF-16 conversion failed");
+        return;
+    }
+
+    // 3. Apply lowercase transformation
+    // Allocate buffer for result (same size should be sufficient for lowercase)
+    UChar *u16_result = (UChar*) emalloc(sizeof(UChar) * (u16_len + 1));
+    int32_t result_len = u_strToLower(u16_result, u16_len + 1, u16_text, u16_len, locale, &status);
+
+    if (U_FAILURE(status)) {
+        efree(u16_text);
+        efree(u16_result);
+        zend_value_error("icu_lowercase: Case conversion failed");
+        return;
+    }
+
+    // 4. Convert UTF-16 result back to UTF-8
+    int32_t u8_len = 0;
+    u_strToUTF8(NULL, 0, &u8_len, u16_result, result_len, &status);
+
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        status = U_ZERO_ERROR;
+        char *u8_result = (char*) emalloc(u8_len + 1);
+        u_strToUTF8(u8_result, u8_len + 1, &u8_len, u16_result, result_len, &status);
+
+        if (U_SUCCESS(status)) {
+            ZVAL_STRINGL(return_value, u8_result, u8_len);
+        } else {
+            ZVAL_EMPTY_STRING(return_value);
+        }
+
+        efree(u8_result);
+    } else {
+        ZVAL_EMPTY_STRING(return_value);
+    }
+
+    // 5. Cleanup
+    efree(u16_text);
+    efree(u16_result);
+}

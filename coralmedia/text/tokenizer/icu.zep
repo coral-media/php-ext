@@ -27,4 +27,17 @@ class Icu
         // This call will be intercepted by the optimizer
         return icu_sentence_break(text, locale);
     }
+
+    /**
+     * Convert text to lowercase using ICU locale-aware case mapping
+     *
+     * @param string text The text to convert
+     * @param string locale The locale (e.g., "en_US", "tr_TR")
+     * @return string Lowercase text
+     */
+    public static function lowercase(string text, string locale = "en_US") -> string
+    {
+        // This call will be intercepted by the optimizer
+        return icu_lowercase(text, locale);
+    }
 }
