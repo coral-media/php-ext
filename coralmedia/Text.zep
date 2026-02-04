@@ -10,13 +10,34 @@ class Text
      *
      * Supports multiple languages including English, Japanese, Chinese, Thai, etc.
      *
+     * Options:
+     * - strip_numbers: bool (default false) - Remove numeric tokens from results
+     *
      * @param string text The text to tokenize
      * @param string locale The locale (default: "en_US")
+     * @param array options Configuration options
      * @return array Array of word tokens
      */
-    public static function wordBreak(string text, string locale = "en_US") -> array
+    public static function wordBreak(string text, string locale = "en_US", array options = []) -> array
     {
-        return Icu::wordBreak(text, locale);
+        var tokens, token, stripNumbers, filtered;
+
+        let tokens = Icu::wordBreak(text, locale);
+
+        // Apply strip_numbers filter if requested
+        if fetch stripNumbers, options["strip_numbers"] {
+            if stripNumbers {
+                let filtered = [];
+                for token in tokens {
+                    if !is_numeric(token) {
+                        let filtered[] = token;
+                    }
+                }
+                return filtered;
+            }
+        }
+
+        return tokens;
     }
 
     /**
@@ -66,6 +87,7 @@ class Text
      * - remove_diacritics: bool (default false) - Remove diacritics from terms
      * - stem: bool (default false) - Apply stemming to terms
      * - stem_language: string (default "english") - Language for stemming
+     * - strip_numbers: bool (default false) - Remove numeric tokens
      *
      * @param string text The text to analyze
      * @param array options Configuration options
@@ -73,8 +95,8 @@ class Text
      */
     public static function termFrequency(string text, array options = []) -> array
     {
-        var locale, normalize, toLowercase, removeDiacritics, applyStem, stemLanguage;
-        var tokens, counts, term, total, processedTokens, stemmedTerm;
+        var locale, normalize, toLowercase, removeDiacritics, applyStem, stemLanguage, stripNumbers;
+        var tokens, counts, term, total, processedTokens, stemmedTerm, wordBreakOptions;
         var count, key;
         double normalizedValue;
 
@@ -115,8 +137,17 @@ class Text
             let stemLanguage = "english";
         }
 
+        if fetch stripNumbers, options["strip_numbers"] {
+            // stripNumbers is set
+        } else {
+            let stripNumbers = false;
+        }
+
+        // Build wordBreak options
+        let wordBreakOptions = ["strip_numbers": stripNumbers];
+
         // Tokenize text
-        let tokens = self::wordBreak(text, locale);
+        let tokens = self::wordBreak(text, locale, wordBreakOptions);
 
         // Process tokens
         let processedTokens = [];
@@ -177,6 +208,7 @@ class Text
      * - remove_diacritics: bool (default false) - Remove diacritics from terms
      * - stem: bool (default false) - Apply stemming to terms
      * - stem_language: string (default "english") - Language for stemming
+     * - strip_numbers: bool (default false) - Remove numeric tokens
      * - smooth: bool (default true) - Use smooth IDF to prevent division by zero
      *
      * @param array documents Array of document strings
@@ -185,8 +217,8 @@ class Text
      */
     public static function idf(array documents, array options = []) -> array
     {
-        var locale, toLowercase, removeDiacritics, applyStem, stemLanguage, smooth;
-        var doc, tokens, term, documentFrequency, stemmedTerm;
+        var locale, toLowercase, removeDiacritics, applyStem, stemLanguage, stripNumbers, smooth;
+        var doc, tokens, term, documentFrequency, stemmedTerm, wordBreakOptions;
         var termsSeen, numDocuments, idfScores, key, df;
         double idfScore;
 
@@ -221,11 +253,20 @@ class Text
             let stemLanguage = "english";
         }
 
+        if fetch stripNumbers, options["strip_numbers"] {
+            // stripNumbers is set
+        } else {
+            let stripNumbers = false;
+        }
+
         if fetch smooth, options["smooth"] {
             // smooth is set
         } else {
             let smooth = true;
         }
+
+        // Build wordBreak options
+        let wordBreakOptions = ["strip_numbers": stripNumbers];
 
         // Count document frequency (number of documents containing each term)
         let documentFrequency = [];
@@ -233,7 +274,7 @@ class Text
 
         for doc in documents {
             // Get unique terms in this document
-            let tokens = self::wordBreak(doc, locale);
+            let tokens = self::wordBreak(doc, locale, wordBreakOptions);
             let termsSeen = [];
 
             for term in tokens {
@@ -297,6 +338,7 @@ class Text
      * - remove_diacritics: bool (default false) - Remove diacritics from terms
      * - stem: bool (default false) - Apply stemming to terms
      * - stem_language: string (default "english") - Language for stemming
+     * - strip_numbers: bool (default false) - Remove numeric tokens
      *
      * @param string document The document to analyze
      * @param array idfScores IDF scores from idf() method

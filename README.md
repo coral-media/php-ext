@@ -339,6 +339,10 @@ php -r "print_r(CoralMedia\\Text::wordBreak('สวัสดีครับ', 't
 # Chinese (character-based)
 php -r "print_r(CoralMedia\\Text::wordBreak('我爱中国', 'zh_CN'));"
 # Output: Array([0]=>我 [1]=>爱 [2]=>中国)
+
+# Strip numbers from tokens
+php -r "print_r(CoralMedia\\Text::wordBreak('price 100 dollars', 'en_US', ['strip_numbers' => true]));"
+# Output: Array([0]=>price [1]=>dollars)
 ```
 
 ##### Sentence Breaking
@@ -425,6 +429,7 @@ php -r "print_r(CoralMedia\\Text::termFrequency('私は学生です私は', ['lo
 - `remove_diacritics` (bool, default: false) - Remove accents before counting
 - `stem` (bool, default: false) - Apply stemming to reduce words to root form
 - `stem_language` (string, default: "english") - Language for stemming (english, french, german, etc.)
+- `strip_numbers` (bool, default: false) - Remove purely numeric tokens
 
 **Example with stemming:**
 ```bash
@@ -467,6 +472,7 @@ Where N = total documents, df = document frequency (# docs containing term)
 - `remove_diacritics` (bool, default: false) - Remove accents
 - `stem` (bool, default: false) - Apply stemming to group word variants
 - `stem_language` (string, default: "english") - Language for stemming
+- `strip_numbers` (bool, default: false) - Remove numeric tokens
 - `smooth` (bool, default: true) - Use smooth IDF to prevent division by zero
 
 ##### TF-IDF Scoring

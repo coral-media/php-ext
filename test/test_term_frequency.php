@@ -31,6 +31,7 @@ class TermFrequencyTestRunner
         $this->testCombinedOptions();
         $this->testMultilingual();
         $this->testStemming();
+        $this->testStripNumbers();
         $this->testEdgeCases();
 
         $this->printSummary();
@@ -246,9 +247,47 @@ class TermFrequencyTestRunner
         echo "\n";
     }
 
+    private function testStripNumbers(): void
+    {
+        echo "Test 8: Strip Numbers\n";
+        echo str_repeat('-', 50) . "\n";
+
+        $tests = [
+            [
+                "hello 123 world 456",
+                ["strip_numbers" => true],
+                ["hello" => 1, "world" => 1],
+                "Numbers removed from term frequency"
+            ],
+            [
+                "hello 123 world 456",
+                ["strip_numbers" => false],
+                ["hello" => 1, "123" => 1, "world" => 1, "456" => 1],
+                "Numbers kept when strip_numbers is false"
+            ],
+            [
+                "price is 100 dollars for 5 items",
+                ["strip_numbers" => true],
+                ["price" => 1, "is" => 1, "dollars" => 1, "for" => 1, "items" => 1],
+                "Multiple numbers stripped"
+            ],
+            [
+                "test123 hello",
+                ["strip_numbers" => true],
+                ["test123" => 1, "hello" => 1],
+                "Alphanumeric tokens preserved (not purely numeric)"
+            ],
+        ];
+
+        foreach ($tests as [$text, $options, $expected, $desc]) {
+            $this->assertTermFrequency($text, $options, $expected, $desc);
+        }
+        echo "\n";
+    }
+
     private function testEdgeCases(): void
     {
-        echo "Test 8: Edge Cases\n";
+        echo "Test 9: Edge Cases\n";
         echo str_repeat('-', 50) . "\n";
 
         $tests = [
