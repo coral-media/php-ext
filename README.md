@@ -393,12 +393,131 @@ php -r "echo CoralMedia\\Text::removeDiacritics('Việt Nam');"
 # Output: Viet Nam
 ```
 
+##### Term Frequency Extraction
+
+Extract term frequencies from text for TF-IDF pipelines and text analysis. Returns an associative array mapping terms to their occurrence counts or normalized frequencies.
+
+```bash
+# Basic term counting
+php -r "print_r(CoralMedia\\Text::termFrequency('hello world hello'));"
+# Output: Array([hello] => 2, [world] => 1)
+
+# Normalized frequencies (0-1 range, sum = 1.0)
+php -r "print_r(CoralMedia\\Text::termFrequency('hello world hello', ['normalize' => true]));"
+# Output: Array([hello] => 0.66666666666667, [world] => 0.33333333333333)
+
+# With preprocessing options
+php -r "print_r(CoralMedia\\Text::termFrequency('Café CAFÉ coffee', [
+    'lowercase' => true,
+    'remove_diacritics' => true
+]));"
+# Output: Array([cafe] => 2, [coffee] => 1)
+
+# Japanese text with locale-specific tokenization
+php -r "print_r(CoralMedia\\Text::termFrequency('私は学生です私は', ['locale' => 'ja_JP']));"
+# Output: Array([私] => 2, [は] => 2, [学生] => 1, [です] => 1)
+```
+
+**Options:**
+- `locale` (string, default: "en_US") - Locale for word boundary detection
+- `normalize` (bool, default: false) - Normalize frequencies by total term count
+- `lowercase` (bool, default: true) - Convert terms to lowercase before counting
+- `remove_diacritics` (bool, default: false) - Remove accents before counting
+- `stem` (bool, default: false) - Apply stemming to reduce words to root form
+- `stem_language` (string, default: "english") - Language for stemming (english, french, german, etc.)
+
+**Example with stemming:**
+```bash
+# Without stemming - treats variations as different words
+php -r "print_r(CoralMedia\\Text::termFrequency('running runs runner'));"
+# Output: Array([running] => 1, [runs] => 1, [runner] => 1)
+
+# With stemming - groups related words
+php -r "print_r(CoralMedia\\Text::termFrequency('running runs runner', ['stem' => true]));"
+# Output: Array([run] => 2, [runner] => 1)
+```
+
+##### Inverse Document Frequency (IDF)
+
+Calculate IDF scores from a corpus of documents. IDF measures how important a term is across a document collection - rare terms get higher scores, common terms get lower scores.
+
+```bash
+# Calculate IDF from a corpus
+php -r "
+\$corpus = [
+    'the cat sat on the mat',
+    'the dog sat on the log',
+    'cats and dogs'
+];
+\$idf = CoralMedia\\Text::idf(\$corpus);
+print_r(\$idf);
+"
+# Output: Array([the] => 1.288, [cat] => 1.693, [sat] => 1.288, ...)
+```
+
+**Formula:**
+- Smooth IDF (default): `log((N + 1) / (df + 1)) + 1`
+- Standard IDF: `log(N / df)`
+
+Where N = total documents, df = document frequency (# docs containing term)
+
+**Options:**
+- `locale` (string, default: "en_US") - Locale for tokenization
+- `lowercase` (bool, default: true) - Convert terms to lowercase
+- `remove_diacritics` (bool, default: false) - Remove accents
+- `stem` (bool, default: false) - Apply stemming to group word variants
+- `stem_language` (string, default: "english") - Language for stemming
+- `smooth` (bool, default: true) - Use smooth IDF to prevent division by zero
+
+##### TF-IDF Scoring
+
+Calculate TF-IDF (Term Frequency-Inverse Document Frequency) scores for a document. TF-IDF reflects how important a word is to a document in a collection.
+
+```bash
+# Complete TF-IDF pipeline
+php -r "
+\$corpus = [
+    'machine learning is great',
+    'deep learning is amazing',
+    'artificial intelligence is the future'
+];
+
+// Step 1: Calculate IDF from corpus
+\$idf = CoralMedia\\Text::idf(\$corpus);
+
+// Step 2: Calculate TF-IDF for a document
+\$doc = 'machine learning is great';
+\$tfidf = CoralMedia\\Text::tfidf(\$doc, \$idf);
+print_r(\$tfidf);
+"
+# Output: Array([machine] => 1.693, [learning] => 1.288, [is] => 1.0, [great] => 1.693)
+# Rare words score higher than common words
+
+# With stemming to group word variations
+php -r "
+\$corpus = ['running fast', 'he runs quickly', 'the runner'];
+\$idf = CoralMedia\\Text::idf(\$corpus, ['stem' => true]);
+\$tfidf = CoralMedia\\Text::tfidf('running runs the maze runner', \$idf, ['stem' => true]);
+print_r(\$tfidf);
+"
+# Output: Array([run] => 2.575) - 'running' and 'runs' grouped as 'run'
+```
+
+**Use cases:**
+- Document similarity and ranking
+- Keyword extraction
+- Search engine relevance scoring
+- Content recommendation
+
 **Function signatures:**
 ```php
 CoralMedia\Text::wordBreak(string $text, string $locale = "en_US"): array
 CoralMedia\Text::sentenceBreak(string $text, string $locale = "en_US"): array
 CoralMedia\Text::lowercase(string $text, string $locale = "en_US"): string
 CoralMedia\Text::removeDiacritics(string $text): string
+CoralMedia\Text::termFrequency(string $text, array $options = []): array
+CoralMedia\Text::idf(array $documents, array $options = []): array
+CoralMedia\Text::tfidf(string $document, array $idfScores, array $options = []): array
 ```
 
 **Supported locales:**
@@ -415,6 +534,9 @@ CoralMedia\Text::removeDiacritics(string $text): string
 - Locale-specific rules for contractions, abbreviations, numbers
 - Locale-aware case normalization (handles Turkish İ/I, Greek Σ/ς, etc.)
 - Diacritic removal using ICU transliteration (café → cafe, Zürich → Zurich)
+- Snowball stemming for 16+ languages (running/runs/runner → run)
+- Complete TF-IDF pipeline: term frequency, IDF, and TF-IDF scoring
+- Configurable preprocessing for consistent text normalization
 - Significantly more accurate than regex-based tokenization
 
 ---
